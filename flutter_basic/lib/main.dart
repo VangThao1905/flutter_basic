@@ -1,11 +1,6 @@
-import 'dart:developer';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_basic/page_a.dart';
 import 'package:flutter_basic/page_b.dart';
-import 'package:flutter_basic/user_model.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_basic/user_model_new.dart';
 
 void main() {
   runApp(const MyApp());
@@ -36,42 +31,12 @@ class ScreenTwo extends StatefulWidget {
 }
 
 class _ScreenTwoState extends State<ScreenTwo> {
-  int number = 0;
-  String str = "";
-  bool isStudent = false;
-  double point = 0.0;
+  UserModelNew userModelNew = UserModelNew();
 
   @override
   void initState() {
+    userModelNew = userModelNew.copyWith(id: 1, name: 'Nguyen Van A', age: 20);
     super.initState();
-  }
-
-  Future<void> saveData() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    /// Luu du lieu
-    prefs.setInt('number', number);
-    prefs.setString('str', str);
-  }
-
-  Future<void> getData() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    ///Doc du lieu ra
-    int? numberTemp = prefs.getInt('number') ?? 0;
-    String? getStr = prefs.getString('str') ?? '';
-    log('getData:$numberTemp');
-    setState(() {
-      number = numberTemp;
-      str = getStr;
-    });
-  }
-
-  void incrementNumber() {
-    setState(() {
-      number++;
-      str += 'Xin chao';
-    });
   }
 
   @override
@@ -93,30 +58,24 @@ class _ScreenTwoState extends State<ScreenTwo> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 32),
-                  Text('Number:$number', style: TextStyle(fontSize: 36)),
-                  Text('Str:$str', style: TextStyle(fontSize: 20)),
-                  Text('isStudent:$isStudent'),
-                  Text('Point:$point'),
-                  Row(
-                    children: [
-                      OutlinedButton(
-                        onPressed: incrementNumber,
-                        child: Text('Increment number'),
-                      ),
-                      OutlinedButton(
-                        onPressed: () async {
-                          await saveData();
-                        },
-                        child: Text('Save'),
-                      ),
-                      OutlinedButton(
-                        onPressed: () async {
-                          await getData();
-                        },
-                        child: Text('Load data'),
-                      ),
-                    ],
+                  Text('User info:${userModelNew.toJson()}'),
+
+                  OutlinedButton(
+                    onPressed: () {
+                      /// Call API
+                      Map<String, dynamic> json = {
+                        'id': 2,
+                        'name': 'Tran Van B',
+                        'age': 25,
+                      };
+
+                      UserModelNew user = UserModelNew.fromJson(json);
+
+                      setState(() {
+                        userModelNew = user;
+                      });
+                    },
+                    child: Text('Parse json'),
                   ),
                 ],
               ),
