@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -52,7 +53,14 @@ class _MyAppViewState extends State<MyAppView> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [],
+                children: [
+                  Image.asset('assets/images/img_flutter.png'),
+                  SvgPicture.asset(
+                    'assets/icons/ic_bird.svg',
+                    width: 100,
+                    height: 100,
+                  ),
+                ],
               ),
             ),
           ),
