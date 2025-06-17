@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_basic/page_b.dart';
-import 'package:flutter_basic/user_model_new.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
@@ -14,28 +13,24 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      routes: {PageB.routeName: (context) => PageB()},
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const ScreenTwo(),
+      home: const MyAppView(),
     );
   }
 }
 
-class ScreenTwo extends StatefulWidget {
-  const ScreenTwo({super.key});
+class MyAppView extends StatefulWidget {
+  const MyAppView({super.key});
 
   @override
-  State<ScreenTwo> createState() => _ScreenTwoState();
+  State<MyAppView> createState() => _MyAppViewState();
 }
 
-class _ScreenTwoState extends State<ScreenTwo> {
-  UserModelNew userModelNew = UserModelNew();
-
+class _MyAppViewState extends State<MyAppView> {
   @override
   void initState() {
-    userModelNew = userModelNew.copyWith(id: 1, name: 'Nguyen Van A', age: 20);
     super.initState();
   }
 
@@ -57,27 +52,7 @@ class _ScreenTwoState extends State<ScreenTwo> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('User info:${userModelNew.toJson()}'),
-
-                  OutlinedButton(
-                    onPressed: () {
-                      /// Call API
-                      Map<String, dynamic> json = {
-                        'id': 2,
-                        'name': 'Tran Van B',
-                        'age': 25,
-                      };
-
-                      UserModelNew user = UserModelNew.fromJson(json);
-
-                      setState(() {
-                        userModelNew = user;
-                      });
-                    },
-                    child: Text('Parse json'),
-                  ),
-                ],
+                children: [],
               ),
             ),
           ),
