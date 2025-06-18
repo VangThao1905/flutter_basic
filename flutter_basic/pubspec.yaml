@@ -19,6 +19,7 @@ dependencies:
   freezed_annotation: ^2.4.4
   freezed: ^2.5.8
   flutter_svg: ^2.2.0
+  image_picker: ^1.1.2
 
 
 dev_dependencies:
