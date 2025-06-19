@@ -1,8 +1,11 @@
-import 'dart:io';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:flutter_basic/page_one_cubit.dart';
+import 'package:flutter_basic/page_one_state.dart';
+import 'package:flutter_basic/user_model_new.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,6 +24,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
       home: const MyAppView(),
+      builder: EasyLoading.init(),
     );
   }
 }
@@ -33,20 +37,12 @@ class MyAppView extends StatefulWidget {
 }
 
 class _MyAppViewState extends State<MyAppView> {
-  XFile _file = XFile('');
+  final PageOneCubit _pageOneCubit = PageOneCubit();
 
   @override
   void initState() {
+    _pageOneCubit.init();
     super.initState();
-  }
-
-  Future<void> pickImage() async {
-    final result = await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (result != null) {
-      setState(() {
-        _file = result;
-      });
-    }
   }
 
   @override
@@ -64,33 +60,48 @@ class _MyAppViewState extends State<MyAppView> {
           body: Center(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Image.asset('assets/images/img_flutter.png'),
-                  SvgPicture.asset(
-                    'assets/icons/ic_bird.svg',
-                    width: 100,
-                    height: 100,
-                  ),
-
-                  Image.network(
-                    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMXGTLRjhi5Z8LdEFgaFNyR82Pn8wKmdC4Xw&s',
-                    // width: MediaQuery.of(context).size.width,
-                    // height: 200,
-                  ),
-                  if (_file.path.isNotEmpty) ...{
-                    Image.file(File(_file.path), width: 200, height: 200),
-                  },
-
-                  OutlinedButton(
-                    onPressed: () async {
-                      await pickImage();
-                    },
-                    child: Text('Pick image'),
-                  ),
-                ],
+              child: BlocConsumer<PageOneCubit, PageOneState>(
+                bloc: _pageOneCubit,
+                listener: (context, state) {
+                  if (state.isShowLoading) {
+                    EasyLoading.show();
+                  } else {
+                    EasyLoading.dismiss();
+                  }
+                },
+                listenWhen: (pre, cur) => true,
+                buildWhen: (pre, cur) => true,
+                builder: (context, state) {
+                  log('List length:${state.userList.length}');
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: 300,
+                        child: ListView.separated(
+                          itemBuilder: (context, index) {
+                            UserModelNew user = state.userList[index];
+                            return ListTile(
+                              title: Text(user.name),
+                              subtitle: Text('${user.id} - ${user.age}'),
+                            );
+                          },
+                          separatorBuilder: (context, index) {
+                            return Divider();
+                          },
+                          itemCount: state.userList.length,
+                        ),
+                      ),
+                      OutlinedButton(
+                        onPressed: () {
+                          _pageOneCubit.loadUsers();
+                        },
+                        child: Text('Load data'),
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
           ),
